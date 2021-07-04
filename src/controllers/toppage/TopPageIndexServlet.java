@@ -34,9 +34,9 @@ public class TopPageIndexServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         EntityManager em = DBUtil.createEntityManager();
-
+        
         Employee login_employee = (Employee)request.getSession().getAttribute("login_employee");
-
+        
         int page;
         try{
             page = Integer.parseInt(request.getParameter("page"));
@@ -52,7 +52,7 @@ public class TopPageIndexServlet extends HttpServlet {
         long reports_count = (long)em.createNamedQuery("getMyReportsCount", Long.class)
                                      .setParameter("employee", login_employee)
                                      .getSingleResult();
-
+        
         em.close();
 
         request.setAttribute("reports", reports);

@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import models.Employee;
 import models.Report;
 import utils.DBUtil;
-
 /**
  * Servlet implementation class ReportsShowServlet
  */
@@ -34,8 +34,13 @@ public class ReportsShowServlet extends HttpServlet {
         EntityManager em = DBUtil.createEntityManager();
 
         Report r = em.find(Report.class, Integer.parseInt(request.getParameter("id")));
+        Employee login_employee = (Employee)request.getSession().getAttribute("login_employee");
 
-        em.close();
+        long likes_count =(long)em.createNamedQuery("getMyLikesCount",Long.class)
+                .setParameter("employee", login_employee)
+                .setParameter("report",r)
+                .getSingleResult();
+
 
         request.setAttribute("report", r);
         request.setAttribute("_token", request.getSession().getId());

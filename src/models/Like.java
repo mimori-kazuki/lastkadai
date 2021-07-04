@@ -1,6 +1,5 @@
 package models;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -9,34 +8,37 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-@Table(name = "reports")
+@Table(name = "likes")
 @NamedQueries({
     @NamedQuery(
-        name = "getAllReports",
+        name = "getAllLikes",
         query = "SELECT r FROM Report AS r ORDER BY r.id DESC"
     ),
     @NamedQuery(
-        name = "getReportsCount",
+        name = "getLikes",
         query = "SELECT COUNT(r) FROM Report AS r"
     ),
+    
     @NamedQuery(
-        name = "getMyAllReports",
-        query = "SELECT r FROM Report AS r WHERE r.employee = :employee ORDER BY r.id DESC"
-    ),
+            name = "getMyLikesCount",
+            query = "SELECT COUNT(l) FROM Like AS l WHERE l.employee = :employee AND l.report = :report"
+        ),
     @NamedQuery(
-        name = "getMyReportsCount",
-        query = "SELECT COUNT(r) FROM Report AS r WHERE r.employee = :employee"
-    ),
-   
+            name = "getYoineCount", 
+            query = "SELECT COUNT(l) FROM Like AS l WHERE l.report = :report "
+        ),
+        @NamedQuery(
+            name = "getYoineList", 
+            query = "SELECT l FROM Like AS l WHERE l.report = :report ORDER BY l.created_at DESC"
+        )
 })
 @Entity
-public class Report {
+public class Like {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,32 +48,15 @@ public class Report {
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
-    @Column(name = "report_date", nullable = false)
-    private Date report_date;
-
-    @Column(name = "title", length = 255, nullable = false)
-    private String title;
-
-    @Lob
-    @Column(name = "content", nullable = false)
-    private String content;
+    @ManyToOne
+    @JoinColumn(name = "report_id", nullable = false)
+    private Report report;
 
     @Column(name = "created_at", nullable = false)
     private Timestamp created_at;
 
     @Column(name = "updated_at", nullable = false)
     private Timestamp updated_at;
-
- // いいね数のプロパティを追加
-    @Column(name = "like_count", nullable = false)
-    private Integer like_count;
-    // いいね数のゲッターセッターを追加
-    public Integer getLike_count() {
-        return like_count;
-    }
-    public void setLike_count(Integer like_count) {
-        this.like_count = like_count;
-    }
 
     public Integer getId() {
         return id;
@@ -89,30 +74,13 @@ public class Report {
         this.employee = employee;
     }
 
-    public Date getReport_date() {
-        return report_date;
+    public Report getReport() {
+        return report;
     }
 
-    public void setReport_date(Date report_date) {
-        this.report_date = report_date;
+    public void setReport(Report report) {
+        this.report = report;
     }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public Timestamp getCreated_at() {
         return created_at;
     }
@@ -128,6 +96,4 @@ public class Report {
     public void setUpdated_at(Timestamp updated_at) {
         this.updated_at = updated_at;
     }
-    
-    }
-
+}
